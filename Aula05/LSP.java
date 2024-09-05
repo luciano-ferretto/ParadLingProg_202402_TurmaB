@@ -18,9 +18,7 @@ public class LSP {
 
 abstract class FormaGeometrica {
     double lado;
-
     abstract double calculaArea();
-
     abstract double calculaVolume();
 }
 
@@ -32,7 +30,6 @@ class Cubo extends FormaGeometrica {
     double calculaArea() {
         return 6 * (lado * lado);
     }
-
     @Override
     double calculaVolume() {
         return 3 * lado;
@@ -47,9 +44,9 @@ class Quadrado extends FormaGeometrica {
     double calculaArea() {
         return lado * lado;
     }
-
     @Override
     double calculaVolume() {
-        throw new UnsupportedOperationException("Unsupported method 'calculaVolume'");
+        return 0;
+        //throw new UnsupportedOperationException("Unsupported method 'calculaVolume'");
     }
 }

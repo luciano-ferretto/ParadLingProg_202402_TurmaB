@@ -17,7 +17,6 @@ public class LSPCorrigido {
 
 abstract class FormaGeometrica {
     double lado;
-
     abstract double calculaArea();
 }
 
