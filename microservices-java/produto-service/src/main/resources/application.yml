@@ -1,6 +1,5 @@
 server:
   port: 8000
-
 management:
   endpoints:
     web:
@@ -24,3 +23,6 @@ spring:
       hibernate:
         format-sql: true
     show-sql: true
+  flyway:
+    locations:
+    - classpath:/db_migration
