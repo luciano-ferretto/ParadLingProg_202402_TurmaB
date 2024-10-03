@@ -1,0 +1,26 @@
+server:
+  port: 8000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - '*'
+  endpoint:
+    health:
+      show-details: always
+spring:
+  application:
+    name: produto-service
+  datasource:
+    url: jdbc:postgresql://localhost/produto_db_b
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format-sql: true
+    show-sql: true
