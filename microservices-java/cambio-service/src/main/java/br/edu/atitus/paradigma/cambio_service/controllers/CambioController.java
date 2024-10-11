@@ -17,10 +17,14 @@ import br.edu.atitus.paradigma.cambio_service.repositories.CambioRepository;
 public class CambioController {
 	
 	private final CambioRepository cambioRepository;
+	//private final CotacaoBCBClient cotacaoBCB;
 
-	public CambioController(CambioRepository cambioRepository) {
+	public CambioController(CambioRepository cambioRepository
+			//, CotacaoBCBClient cotacaoBCB
+			) {
 		super();
 		this.cambioRepository = cambioRepository;
+		//this.cotacaoBCB = cotacaoBCB;
 	}
 	
 	@Value("${server.port}")
@@ -34,6 +38,13 @@ public class CambioController {
 		
 		CambioEntity cambio = cambioRepository.findByOrigemAndDestino(origem, destino)
 				.orElseThrow(() -> new Exception("Câmbio não encontrado para esta origem e destino"));
+		
+		//Aqui temos o exemplo para buscar a cotação na API  do Banco Central
+		//   Esse exemplo só vai funcionar corretamente caso a conversão seja de Dólar para Real (USD -> BRL)
+		//   Outras conversões seriam necessário melhorar o código
+		//   Vamos deixar desabilitado - servirá apenas como exemplo
+		//ListaCotacaoResponse cotacao = cotacaoBCB.getCotacao("USD", "10-10-2024");
+		//cambio.setFator(cotacao.getValue().get(0).getCotacaoVenda());
 		
 		cambio.setValorConvertido(valor * cambio.getFator());
 		cambio.setAmbiente("Cambio-Service run in port: " + porta);
