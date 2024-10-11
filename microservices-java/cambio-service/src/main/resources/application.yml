@@ -1,31 +1,30 @@
 server:
-  port: 8000
+  port: 8100
+spring:
+  application:
+    name: cambio-service
+  datasource:
+    url: jdbc:postgresql://localhost/cambio_db_b
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    locations:
+    - classpath:/db_migration
+
 management:
   endpoints:
     web:
       exposure:
         include:
         - '*'
-  endpoint:
-    health:
-      show-details: always
-spring:
-  application:
-    name: produto-service
-  datasource:
-    url: jdbc:postgresql://localhost/produto_db_b
-    username: postgres
-    password: postgres
-  jpa:
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        format-sql: true
-    show-sql: true
-  flyway:
-    locations:
-    - classpath:/db_migration
+
 eureka:
   client:
     service-url:
