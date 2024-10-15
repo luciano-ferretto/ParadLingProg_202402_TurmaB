@@ -17,47 +17,51 @@ import br.edu.atitus.paradigma.cambio_service.repositories.CambioRepository;
 @RestController
 @RequestMapping("cambio-service")
 public class CambioController {
-
+	
 	private final CambioRepository cambioRepository;
-	private final CotacaoClient cotacaoBCB;
+	private final CotacaoClient cotacaoClient;
 
-	public CambioController(CambioRepository cambioRepository, CotacaoClient cotacaoBCB) {
+	public CambioController(CambioRepository cambioRepository, CotacaoClient cotacaoClient) {
 		super();
 		this.cambioRepository = cambioRepository;
-		this.cotacaoBCB = cotacaoBCB;
+		this.cotacaoClient = cotacaoClient;
 	}
-
+	
 	@Value("${server.port}")
 	private int porta;
-
+	
 	@GetMapping("/{valor}/{origem}/{destino}")
-	public ResponseEntity<CambioEntity> getCambio(@PathVariable double valor, @PathVariable String origem,
+	public ResponseEntity<CambioEntity> getCambio(
+			@PathVariable double valor,
+			@PathVariable String origem,
 			@PathVariable String destino) throws Exception {
-
-		CambioEntity cambio = cambioRepository.findByOrigemAndDestino(origem, destino)
-				.orElseThrow(() -> new Exception("Câmbio não encontrado para esta origem e destino"));
-
-		// Busca a cotação de origem
-		CotacaoResponse cotacaoOrigem = cotacaoBCB.getCotacao(origem, "10-10-2024");
+		
+		//CambioEntity cambio = cambioRepository.findByOrigemAndDestino(origem, destino)
+		//		.orElseThrow(() -> new Exception("Câmbio não encontrado para esta origem e destino"));
+		
+		// Aqui vamos criar um novo objeto "cambio" pois nesse momento não vamos buscar do banco de dados
+		CambioEntity cambio = new CambioEntity();
+		cambio.setOrigem(origem);
+		cambio.setDestino(destino);
+		
+		CotacaoResponse cotacaoOrigem = cotacaoClient.getCotacao(origem, "10-10-2024");
+		double fator;
 		if (destino.equals("BRL")) { 
-			// Se o destino é o Real (BRL) então a cotação retornada é o nosso Fator de conversão
-			double fator = cotacaoOrigem.getValue().get(0).getCotacaoVenda();
-			cambio.setFator(fator);
+			fator = cotacaoOrigem.getValue().get(0).getCotacaoVenda();
 		} else {
 			// Se o destino NÃO é o Real (BRL), então temos que fazer o cálculo, 
 			//    já que a API do Banco Central retorna sempre a cotação em relação a moeda brasileira
-			CotacaoResponse cotacaoDestino = cotacaoBCB.getCotacao(destino, "10-10-2024");
-			double fator = cotacaoOrigem.getValue().get(0).getCotacaoVenda()
+			CotacaoResponse cotacaoDestino = cotacaoClient.getCotacao(destino, "10-10-2024");
+			fator = cotacaoOrigem.getValue().get(0).getCotacaoVenda()
 								/ cotacaoDestino.getValue().get(0).getCotacaoVenda();
-			cambio.setFator(fator);
 		}
-
+		
+		cambio.setFator(fator);
 		cambio.setValorConvertido(valor * cambio.getFator());
 		cambio.setAmbiente("Cambio-Service run in port: " + porta);
-		
 		return ResponseEntity.ok(cambio);
 	}
-
+	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleException(Exception e) {
 		String cleanMessage = e.getMessage().replaceAll("[\\r\\n]", " ");

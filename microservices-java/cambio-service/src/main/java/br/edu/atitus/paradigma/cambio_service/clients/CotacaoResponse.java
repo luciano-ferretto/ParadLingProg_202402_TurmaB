@@ -8,11 +8,12 @@ public class CotacaoResponse {
 	public List<Cotacao> getValue() {
 		return value;
 	}
+
 	public void setValue(List<Cotacao> value) {
 		this.value = value;
 	}
 
-	public static class Cotacao {
+	public static class Cotacao{
 		private double cotacaoVenda;
 
 		public double getCotacaoVenda() {
@@ -22,6 +23,6 @@ public class CotacaoResponse {
 		public void setCotacaoVenda(double cotacaoVenda) {
 			this.cotacaoVenda = cotacaoVenda;
 		}
-
 	}
+
 }
